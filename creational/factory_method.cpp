@@ -3,13 +3,14 @@
 
 //virtual inheritance if still virtual, yes
 //override final keyword, c++ 11. 
+//abstract class difinition, c++ primer p597. pure virtual class
 
 namespace gof {
 namespace creational {
 
 class Product {
 public:
-    virtual void dis() = 0;
+    virtual void dis(){};
     virtual ~Product(){};
 };
 
@@ -48,7 +49,9 @@ public:
     
 protected:
     Creator() : _product(nullptr) {}   
-    virtual Product* create_product() = 0; 
+    virtual Product* create_product() {
+        return (new Product());
+    }; 
 private:
     class Product* _product;
 };
