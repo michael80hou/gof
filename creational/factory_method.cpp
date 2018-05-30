@@ -4,9 +4,13 @@
 //virtual inheritance if still virtual, yes
 //override final keyword, c++ 11. 
 
+namespace gof {
+namespace creational {
+
 class Product {
 public:
     virtual void dis() = 0;
+    virtual ~Product(){};
 };
 
 class ConcreteProductA : public Product {
@@ -26,40 +30,72 @@ public:
 
 class Creator {
 public:
-    virtual class Product* factory_method() = 0;
+    Product* get_product() {
+        if(nullptr == _product) {
+           _product =  create_product();
+        }
+
+        return _product;
+    }
+
+    void destory_product() {
+        if(_product) {
+            delete _product;
+            _product = nullptr;
+        }
+    }
+    virtual ~Creator(){};
+    
+protected:
+    Creator() : _product(nullptr) {}   
+    virtual Product* create_product() = 0; 
+private:
+    class Product* _product;
 };
 
-template <typename T>
 class ConcreteCreatorA : public Creator {
 public:
-    class Product* factory_method() override {
+    ConcreteCreatorA() {}
+protected:
+    virtual Product* create_product() final {
         return (new ConcreteProductA());
-    }    
+    }  
 };
 
 class ConcreteCreatorB : public Creator {
 public:
-    class Product* factory_method() override {
+    ConcreteCreatorB() {}
+protected:
+    virtual Product* create_product() final {
         return (new ConcreteProductB());
     }  
 };
 
 
+}
+}
+
+using gof::creational::ConcreteCreatorA;
+using gof::creational::ConcreteCreatorB;
+using gof::creational::Creator;
+
 
 int main()
 {
-    ConcreteCreatorA a;
-    ConcreteCreatorB b;
-#if 0
-    Creator *ptr = nullptr;
-    ptr = new ConcreteCreatorA();
-    ptr->factory_method()->dis();
-    ptr = new ConcreteCreatorB();
-    ptr->factory_method()->dis();
-#else
-    a.factory_method()->dis();
-    b.factory_method()->dis();
-#endif
+    Creator *creator = nullptr; 
+    creator = new ConcreteCreatorA();
+    assert(creator);    
+    creator->get_product()->dis();
+    creator->destory_product();
+    delete creator;
+    
+    creator =  nullptr;
+    creator = new ConcreteCreatorB();
+    assert(creator);      
+    creator->get_product()->dis();
+    creator->destory_product();
+    delete creator;
+    
     return 0;
     
 }
